@@ -1,0 +1,171 @@
+*
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	vertical-align: baseline;
+}
+
+#TitleDIV
+{
+	background-color: #FFFF99;
+	background-color: #0079B0;
+	
+	padding: 5px 25px 5px;
+	width: 500px;
+}
+
+#UIDIV
+{
+	background-color: #FFFFFF;
+	padding: 5px 25px 5px;
+	color: #464646;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	width: 500px;
+}
+
+#HelpDIV
+{
+	background-color: #FFFFFF;
+	padding: 5px 25px 5px;
+	color: #464646;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 700;
+	width: 500px;
+}
+
+#FooterDIV
+{
+	background-color: #FFFF99;
+	background-color: #F1F1F1;
+	padding: 5px 25px 5px;
+	font-color: #98634D;
+	color: #464646;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: normal;
+	width: 500px;
+}
+
+h1
+{
+	font-family: "georgia", sans-serif;
+	font-style: normal;  
+	font-size: 40px;
+	color: #ffffff;
+	
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 25px;
+	font-style: normal;
+	font-weight: 700;
+}
+
+.dispblock
+{
+	float: left;
+	padding: 10px ;
+}
+
+#submit 
+{
+	background-color: #F1F1F1;
+	border-radius:6px;
+	color: #464646;
+	font-family: 'Oswald';
+	font-size: 20px;
+	text-decoration: none;
+	cursor: pointer;
+	border:none;
+	border: 1px solid;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 700;
+	width: 200px;
+}
+
+#submit:hover 
+{
+	border: none;
+	background:green;
+	box-shadow: 0px 0px 1px #777;
+}
+
+table
+{
+    
+    
+}
+
+td,th
+{
+	text-align: center;
+	padding: 5px 5px 5px 5px;
+	color: #000000;
+	font-family: 'Oswald';
+	font-size: 18px;
+}
+
+.dispright
+{
+text-align: right;
+}
+
+input
+{
+	background-color: #FFFFFF;
+	border-radius:6px;
+	border
+	color: #FFFFFF;
+	font-family: 'Oswald';
+	font-size: 20px;
+	text-decoration: none;
+	cursor: pointer;
+	border: 1px solid #898989;
+	width: 300px;
+	color: #464646;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: normal;
+}
+
+.CB
+{
+	background-color: #FFFFFF;
+	border-radius:6px;
+	border
+	color: #FFFFFF;
+	font-family: 'Oswald';
+	font-size: 20px;
+	text-decoration: none;
+	cursor: pointer;
+	border: 1px solid #898989;
+	width: 30px;
+	color: #464646;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: normal;
+}
+
+label
+{
+	font-size: 20px;
+	color: #000000;
+	font-family: 'Oswald';
+	text-decoration: none;
+	color: #464646;
+   
+}
+
+.helpimage
+{
+	content:url(help_tablebutton.gif);
+}

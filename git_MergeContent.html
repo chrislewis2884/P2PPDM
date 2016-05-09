@@ -1,0 +1,217 @@
+<HTML>
+<HEAD>
+ <TITLE>GitChill Compare Branch</TITLE>
+<SCRIPT>
+//Constants
+var WEBLINKNOTWORKING = "This Application requires Web.Link to be configured appropriately, contact your system administrator for more information";
+
+String.prototype.trim=function(){
+	return this.replace(/^s*s*$/g,'');
+}
+</SCRIPT>
+<SCRIPT>
+##REPLACEME##
+</SCRIPT>
+<link rel="stylesheet" type="text/css" href="p2p.css" />
+<style>
+
+.ProcessCB
+{
+	background-color: #FFFFFF;
+	border-radius:6px;
+	border
+	color: #FFFFFF;
+	font-family: 'Oswald';
+	font-size: 20px;
+	text-decoration: none;
+	cursor: pointer;
+	
+	width: 30px;
+	color: #464646;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: normal;
+}
+#Merge
+{
+	with: 300px;
+}
+
+</style>
+</HEAD>
+<BODY>
+<div id="TitleDIV">
+	<table  width=100%>
+		<tr>
+			<Td width=130px><H1>p2p-PDM</H1></td>
+			<td width=15px><H1>|</h1></td>
+			<td><H1>Merge Content</H1></td>
+			<td width=15px><img id=Help onclick=HideHelp() src="help_tablebutton.gif" /></td>
+		</tr>
+		<!--<tr>
+			<td colspan=2><img height=40px src="footer.png"></img></td>
+		</tr>-->
+	</table>
+</div>
+
+<DIV id="UIDIV">
+
+</DIV>
+<DIV id="HelpDIV">
+<HR></HR>
+<H2>Tips</H2>
+<LI>Select Items to merge onto Current Branch.</LI>
+<LI>Press the button.</LI>
+<HR></HR>
+</DIV>
+<DIV id="FooterDIV">
+	v3.0.2 by Chris Lewis, www.proetoolbox.co.uk &copy; 2015
+</DIV>
+<SCRIPT language="JavaScript">
+/*=========================
+Global Variables and 
+initialization commands
+=========================*/
+//libCheckEnvironment();
+//var fso = new ActiveXObject("Scripting.FileSystemObject");
+//var CurFolder = oSession.GetCurrentDirectory();
+//var GITWorkTreeFolder = "d:\\ptc\\creostartdir\\GITRepo";
+//var rightNowMS = new Date().getTime() ;
+
+ProcessUI();
+HideHelp();
+
+
+/*=========================
+Program & Utility Functions
+-
+-
+-
+=========================*/
+//=============
+//Program Functions
+//=============
+function ProcessUI()
+{
+	//alert (compareresults.length);
+	var Out = "<form id=\submitform\" name=\"submitform\" method=\"post\" action=\"cherrypick\" enctype=\"application/x-www-form-urlencoded\">";
+	Out+="<INPUT type=\"hidden\" id=\"ProcessCB\" name=\"ProcessCB\" value=\"ignore\" />";
+	Out += "<TABLE><TR><TH>File</TH><TH>Integrate?<Br/><INPUT type=\"checkbox\" class=\"ProcessCB\" onclick=\"ToggleCBs()\" /></Th></TR>";
+	for (var i=0;i<compareresults.length;i++)
+	{
+		var tmp = compareresults[i].substring(1);
+		var filename = tmp.replace(/\s/g,"");
+		if (filename.indexOf(".prt")>-1 ||
+			filename.indexOf(".asm")>-1 ||
+			filename.indexOf(".drw")>-1 ||
+			filename.indexOf(".frm")>-1)
+		{
+			Out+="<TR><TD>"+filename+"</TD><TD align=center>"+
+			"<INPUT type=\"checkbox\" id=\"ProcessCB\"  name=\"ProcessCB\" class=\"ProcessCB\" value=\""+filename+"\" ></INPUT>"+
+			"</TD></TR>";
+		}
+	}
+	Out+="</TABLE>";
+	Out+="<INPUT type=\"hidden\" id=\"BranchName\" name=\"BranchName\" value=\""+branchName+"\" />";
+	Out+="<INPUT type=\"submit\" id=\"Merge\" value=\"Merge Selected >>>>\" />";
+	Out+="</form>";
+	UIDIV.innerHTML = Out;
+}
+
+//=============
+//Utility Functions
+//=============
+function ToggleCBs()
+{
+	
+	for (var i=1;i<submitform.ProcessCB.length;i++)
+	{
+		submitform.ProcessCB[i].checked = submitform.ProcessCB[0].checked;
+	}
+}
+function libCheckEnvironment()
+{
+	//Setup base global variables
+	try
+	{
+		window.mGlob = pfcCreate("MpfcCOMGlobal");
+		window.oSession = mGlob.GetProESession();
+		window.WLAvailable = true;
+	}
+	catch(er)
+	{
+		//Web.Link isn't available
+		alert (WEBLINKNOTWORKING);
+	}
+	//Check for ActiveX abilities
+	try
+	{
+		if (pfcIsWindows ()==false)
+			 throw "ACTIVE X NOT AVAILABLE ON NON-MICROSOFT PLATFORMS";
+
+		//Will fail if security not setup to allow it
+		var MAKEACTIVEXAPPEAR = new ActiveXObject("Scripting.FileSystemObject");
+
+		ActiveXAvailable = true;
+	}
+	catch(er)
+	{}
+}
+
+//Self-Optimizing Versions of standard PTC utility Functions
+function pfcIsWindows()
+{
+	if (navigator.appName.indexOf ("Microsoft") != -1)
+	{
+		pfcIsWindows = function(){
+							return true;
+						};
+	}
+	else
+	{
+		pfcIsWindows = function(){
+							return false;
+							};
+	}
+	return pfcIsWindows();
+}
+
+function pfcCreate(className)
+{
+	if (!pfcIsWindows())
+	{
+		pfcCreate = function(className){
+						netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+						ret = Components.classes ["@ptc.com/pfc/" + className + ";1"].createInstance();
+						return ret;
+					};
+	}
+	else
+	{
+		pfcCreate = function(className){
+						return new ActiveXObject ("pfc."+className);
+					};
+	}
+	return pfcCreate(className);
+}
+function HideHelp()
+{
+
+		HelpDIV.style.display = 'none';
+	
+	document.getElementById('Help').onclick = function(){ShowHelp();}
+}
+
+function ShowHelp()
+{
+
+
+		HelpDIV.style.display = '';
+
+
+	document.getElementById('Help').onclick = function(){HideHelp();}
+}
+</SCRIPT>
+</BODY>
+</HTML>

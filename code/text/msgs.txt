@@ -1,0 +1,204 @@
+P2PPDM1
+Initialize P2P Repo
+#
+#
+P2PPDM2
+Add Files to Repo
+#
+#
+P2PPDM3
+New Branch
+#
+#
+P2PPDM4
+Switch Branch
+#
+#
+P2PPDM5
+Delete Branch
+#
+#
+P2PPDM6
+Merge Files
+#
+#
+P2PPDM7
+Auto Commit
+#
+#
+P2PPDM8
+Reset Workspace
+#
+#
+P2PPDM9
+Update in Session
+#
+#
+P2PPDM10
+Set WS Locks
+#
+#
+P2PPDM11
+Push Changes
+#
+#
+P2PPDM12
+Pull Changes
+#
+#
+P2PPDM14
+Review History
+#
+#
+P2PPDM15
+Delete Files
+#
+#
+P2PPDM16
+Setup Remotes
+#
+#
+P2PPDM17
+Export Patch
+#
+#
+Initialize
+Initialize Repository
+#
+#
+AddFiles
+Stage and Commit Files to Working Repository
+#
+#
+NewBranch
+Create New Branch
+#
+#
+P2PPDM Tools Info: %0s.
+P2PPDM Tools Info: %0s.
+#
+#
+SwitchBranch
+Switch to Another Branch
+#
+#
+DeleteBranch
+Delete Existing Branch
+#
+#
+MergeContent
+Merge Content from Branch into Active Branch
+#
+#
+AutoCommitContent
+Auto Commit Working Tree
+#
+#
+ResetWorkspace
+Reset Workspace back to Repo Working Tree
+#
+#
+UpdateInSession
+Re-open In-Session Files
+#
+#
+SetWSLocks
+Set Workspace Locks on Files
+#
+#
+PushChanges
+Push Current Commit to Public Repo
+#
+#
+PullChanges
+Pull Changes from Shared Repo
+#
+#
+ShowHistory
+Show Commit or File Histories
+#
+#
+DeleteFiles
+Delete Files
+#
+#
+SetSharedRepo
+Connect to Shared Repo
+#
+#
+ExportPatch
+Export Changed Files as Patch
+#
+#
+P2PPDMHelp
+Peer to Peer PDM Help
+#
+#
+InitializeHelp
+Initialize Repository Help
+#
+#
+AddFilesHelp
+Add Files to Working Repository Help
+#
+#
+NewBranchHelp
+Create New Branch Help
+#
+#
+P2PPDM Tools Info: %0s.Help
+P2PPDM Tools Info: %0s. Help
+#
+#
+SwitchBranchHelp
+Switch to Another Branch Help
+#
+#
+DeleteBranchHelp
+Delete Existing Branch Help
+#
+#
+MergeContentHelp
+Merge Content from Branch into Active Branch Help
+#
+#
+AutoCommitContentHelp
+Auto Commit Working Tree Help
+#
+#
+ResetWorkspaceHelp
+Reset Workspace back to Repo Working Tree Help
+#
+#
+UpdateInSessionHelp
+Update In Session Help
+#
+#
+SetWSLocksHelp
+Set Workspace Locks for Files
+#
+#
+PushChangesHelp
+Push Current Commit to Public Repo
+#
+#
+PullChangesHelp
+Pull Changes from Shared Repo
+#
+#
+ShowHistoryHelp
+Show Commit or File Histories
+#
+#
+DeleteFilesHelp
+Delete Files
+#
+#
+SetSharedRepoHelp
+Connect to Shared Repo
+#
+#
+ExportPatchHelp
+Export Changed Files as Patch
+#
+#

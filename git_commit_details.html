@@ -1,0 +1,228 @@
+<HTML>
+<HEAD>
+ <TITLE>GitChill History</TITLE>
+<SCRIPT>
+//Constants
+var WEBLINKNOTWORKING = "This Application requires Web.Link to be configured appropriately, contact your system administrator for more information";
+
+String.prototype.trim=function(){
+	return this.replace(/^s*s*$/g,'');
+}
+</SCRIPT>
+<SCRIPT>
+##REPLACEME##
+</SCRIPT>
+
+
+
+<link rel="stylesheet" type="text/css" href="p2p.css" />
+
+</HEAD>
+<BODY>
+<div id="TitleDIV">
+	<table width=100%>
+		<tr>
+			<Td width=130px><H1>p2p-PDM</H1></td>
+			<td width=15px><H1>|</h1></td>
+			<td><H1>Review Commit</H1></td>
+			<td width=15px><img id=Help onclick=HideHelp() src="help_tablebutton.gif" /></td>
+		</tr>
+		<!--<tr>
+			<td colspan=2><img height=40px src="footer.png"></img></td>
+		</tr>-->
+	</table>
+</div>
+
+<DIV id="UIDIV">
+
+</DIV>
+<DIV id="HelpDIV">
+<HR></HR>
+<H2>Tips</H2>
+<LI>Populate the fields and press the button.</LI>
+<LI>User name and email generate your Repos fingerprint.</LI>
+<LI>Location is the local folder to place the Repository in.</LI>
+<HR></HR>
+</DIV>
+<DIV id="FooterDIV">
+	v3.0.2 by Chris Lewis, www.proetoolbox.co.uk &copy; 2015
+</DIV>
+<SCRIPT language="JavaScript">
+/*=========================
+Global Variables and 
+initialization commands
+=========================*/
+//libCheckEnvironment();
+//var rightNowMS = new Date().getTime() ;
+
+HideHelp();
+BuildUI()
+
+/*=========================
+Program & Utility Functions
+-
+-
+-
+=========================*/
+//=============
+//Program Functions
+//=============
+function BuildUI()
+{
+	var lines = rawcommitinfo.split('<BR>');
+	
+	var Out = "<TABLE>";
+	var CommitID = "TBD";
+	var CommitAuthor = "TBD";
+	var CommitDate = "TBD";
+	var CommitDescr = "TBD";
+	var CommitObjects = new Array();
+	for (var i=0;i<lines.length;i++)
+	{
+		var curLine = lines[i];
+		if (curLine.indexOf('commit ')==0)
+		{
+			//this line is the commit info
+			CommitID = curLine.replace('commit ','');;
+		}
+		else if (curLine.indexOf('Author:')==0)
+		{
+			//this line is the author info
+			CommitAuthor = curLine.replace('Author:','');
+			CommitAuthor = CommitAuthor.replace('<',', ');
+			CommitAuthor = CommitAuthor.replace('>','');
+		}
+		else if (curLine.indexOf('Date:')==0)
+		{
+			//this line is the date info
+			CommitDate = curLine.replace('Date:','');
+		}
+		else if (curLine.indexOf('M\t')==0 || curLine.indexOf('A\t')==0)
+		{
+			CommitObjects[CommitObjects.length] = curLine;
+		}
+		else
+		{
+			if (curLine.length>2)
+			{
+				CommitDescr = curLine;
+			}
+		}
+	}
+	
+	Out+="<TR><TD colspan=2>"+CommitID+"</TD></TR>";
+	Out+="<TR><TD>Author</TD><TD align=left>"+CommitAuthor+"</TD></TR>";
+	Out+="<TR><TD>Date</TD><TD>"+CommitDate+"</TD></TR>";
+	Out+="<TR><TD>Description</TD><TD>"+CommitDescr+"</TD></TR>";
+	Out+="<TR><TD>Objects</TD><TD>"+CommitObjects+"</TD></TR>";
+
+	
+	
+	Out+="<TR><TD></TD><TD><form method=\"post\" action=\"branchfromcommit\" enctype=\"application/x-www-form-urlencoded\">";
+	var newBranchName = CommitID.substring(0,12)+'Commit';
+	Out+="<INPUT type=\"hidden\" id=\"CommitID\"  name=\"CommitID\" value=\""+CommitID+"\" ></INPUT>";
+	Out+="<INPUT type=\"hidden\" id=\"BranchName\"  name=\"BranchName\" value=\""+newBranchName+"\" ></INPUT>";
+	Out+="<INPUT type=\"submit\" value=\"Branch Commit >>>\"  id=\"submit\" />";
+	Out+="</form></TD></TR>";
+	Out+="</TABLE>";
+	UIDIV.innerHTML = Out;
+}
+
+//=============
+//Utility Functions
+//=============
+function ToggleCBs()
+{
+	for (var i=1;i<ProcessCB.length;i++)
+	{
+		ProcessCB[i].checked = ProcessCB[0].checked;
+	}
+}
+function libCheckEnvironment()
+{
+	//Setup base global variables
+	try
+	{
+		window.mGlob = pfcCreate("MpfcCOMGlobal");
+		window.oSession = mGlob.GetProESession();
+		window.WLAvailable = true;
+		var curWin = oSession.CurrentWindow;
+		curWin.SetBrowserSize(40);
+	}
+	catch(er)
+	{
+		//Web.Link isn't available
+		alert (WEBLINKNOTWORKING);
+	}
+	//Check for ActiveX abilities
+	try
+	{
+		if (pfcIsWindows ()==false)
+			 throw "ACTIVE X NOT AVAILABLE ON NON-MICROSOFT PLATFORMS";
+
+		//Will fail if security not setup to allow it
+		var MAKEACTIVEXAPPEAR = new ActiveXObject("Scripting.FileSystemObject");
+
+		ActiveXAvailable = true;
+	}
+	catch(er)
+	{}
+}
+
+//Self-Optimizing Versions of standard PTC utility Functions
+function pfcIsWindows()
+{
+	if (navigator.appName.indexOf ("Microsoft") != -1)
+	{
+		pfcIsWindows = function(){
+							return true;
+						};
+	}
+	else
+	{
+		pfcIsWindows = function(){
+							return false;
+							};
+	}
+	return pfcIsWindows();
+}
+
+function pfcCreate(className)
+{
+	if (!pfcIsWindows())
+	{
+		pfcCreate = function(className){
+						netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+						ret = Components.classes ["@ptc.com/pfc/" + className + ";1"].createInstance();
+						return ret;
+					};
+	}
+	else
+	{
+		pfcCreate = function(className){
+						return new ActiveXObject ("pfc."+className);
+					};
+	}
+	return pfcCreate(className);
+}
+
+function HideHelp()
+{
+
+		HelpDIV.style.display = 'none';
+	
+	document.getElementById('Help').onclick = function(){ShowHelp();}
+}
+
+function ShowHelp()
+{
+
+
+		HelpDIV.style.display = '';
+
+
+	document.getElementById('Help').onclick = function(){HideHelp();}
+}
+</SCRIPT>
+</BODY>
+</HTML>

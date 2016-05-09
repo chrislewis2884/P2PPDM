@@ -1,0 +1,228 @@
+<HTML>
+<HEAD>
+ <TITLE>GitChill Update In Session</TITLE>
+<SCRIPT>
+//Constants
+var WEBLINKNOTWORKING = "This Application requires Web.Link to be configured appropriately, contact your system administrator for more information";
+
+String.prototype.trim=function(){
+	return this.replace(/^s*s*$/g,'');
+}
+</SCRIPT>
+
+<link rel="stylesheet" type="text/css" href="p2p.css" />
+</HEAD>
+<BODY>
+<div id="TitleDIV">
+	<table  width=100%>
+		<tr>
+			<Td width=130px><H1>p2p-PDM</H1></td>
+			<td width=15px><H1>|</h1></td>
+			<td><H1>Update Session</H1></td>
+			<td width=15px><img id=Help onclick=HideHelp() src="help_tablebutton.gif" /></td>
+		</tr>
+		<tr>
+			<td colspan=2><!--<img height=40px src="footer.png"></img>--></td>
+		</tr>
+	</table>
+</div>
+
+<DIV id="UIDIV">
+##REPLACEME2##
+</DIV>
+<DIV id="HelpDIV">
+<HR></HR>
+<H2>Tips</H2>
+<LI>This page simply re-opens what you have in session.</LI>
+<HR></HR>
+</DIV>
+<DIV id="FooterDIV">
+	v3.0.2 by Chris Lewis, www.proetoolbox.co.uk &copy; 2015
+</DIV>
+<SCRIPT language="JavaScript">
+/*=========================
+Global Variables and 
+initialization commands
+=========================*/
+libCheckEnvironment();
+var fso = new ActiveXObject("Scripting.FileSystemObject");
+var CurFolder = oSession.GetCurrentDirectory();
+var rightNowMS = new Date().getTime() ;
+HideHelp();
+var WindowModels = new Array();
+var InMemoryModels = new Array();
+
+//Loop around windows
+var Wins = oSession.ListWindows ()  ;
+for (var i=0;i<Wins.Count;i++)
+{
+	var CurWin = Wins.Item(i);
+	WindowModels[WindowModels.length] = CurWin.Model.Descr;
+}
+
+//Loop around in-memory models
+var Mdls = oSession.ListModelsByType (pfcCreate("pfcModelType").MDL_PART) ;
+for (var i=0;i<Mdls.Count;i++)
+{
+	var CurMdl = Mdls.Item(i);
+	InMemoryModels[InMemoryModels.length] = CurMdl.Descr;
+}
+var Mdls = oSession.ListModelsByType (pfcCreate("pfcModelType").MDL_ASSEMBLY) ;
+for (var i=0;i<Mdls.Count;i++)
+{
+	var CurMdl = Mdls.Item(i);
+	InMemoryModels[InMemoryModels.length] = CurMdl.Descr;
+}
+var Mdls = oSession.ListModelsByType (pfcCreate("pfcModelType").MDL_DRAWING) ;
+for (var i=0;i<Mdls.Count;i++)
+{
+	var CurMdl = Mdls.Item(i);
+	InMemoryModels[InMemoryModels.length] = CurMdl.Descr;
+}
+
+//Close Windows
+var Wins = oSession.ListWindows ()  ;
+for (var i=Wins.Count;i>=0;i--)
+{
+	try
+	{
+	var CurWin = Wins.Item(i);
+	CurWin.Close();
+	}
+	catch(er)
+	{
+	}
+}
+/*
+//Erase Everything from memory
+oSession.EraseUndisplayedModels () ;
+
+//Bring back all models into memory
+for (var i=0;i<InMemoryModels.length;i++)
+{
+	try
+	{
+		oSession.RetrieveModel (InMemoryModels[i]); 
+	}
+	catch(er)
+	{}
+}
+
+//Build back the windows
+for (var i=0;i<WindowModels.length;i++)
+{
+	try
+	{
+		var WinModel = oSession.GetModelFromDescr (WindowModels[i]); 
+		var newWin = oSession.CreateModelWindow (WinModel) ;
+		WinModel.Display();
+	}
+	catch(er)
+	{
+	}
+	
+}
+*/
+
+/*=========================
+Program & Utility Functions
+-
+-
+-
+=========================*/
+//=============
+//Program Functions
+//=============
+
+
+//=============
+//Utility Functions
+//=============
+
+function libCheckEnvironment()
+{
+	//Setup base global variables
+	try
+	{
+		window.mGlob = pfcCreate("MpfcCOMGlobal");
+		window.oSession = mGlob.GetProESession();
+		window.WLAvailable = true;
+		var curWin = oSession.CurrentWindow;
+		curWin.SetBrowserSize(40);
+	}
+	catch(er)
+	{
+		//Web.Link isn't available
+		alert (WEBLINKNOTWORKING);
+	}
+	//Check for ActiveX abilities
+	try
+	{
+		if (pfcIsWindows ()==false)
+			 throw "ACTIVE X NOT AVAILABLE ON NON-MICROSOFT PLATFORMS";
+
+		//Will fail if security not setup to allow it
+		var MAKEACTIVEXAPPEAR = new ActiveXObject("Scripting.FileSystemObject");
+
+		ActiveXAvailable = true;
+	}
+	catch(er)
+	{}
+}
+
+//Self-Optimizing Versions of standard PTC utility Functions
+function pfcIsWindows()
+{
+	if (navigator.appName.indexOf ("Microsoft") != -1)
+	{
+		pfcIsWindows = function(){
+							return true;
+						};
+	}
+	else
+	{
+		pfcIsWindows = function(){
+							return false;
+							};
+	}
+	return pfcIsWindows();
+}
+
+function pfcCreate(className)
+{
+	if (!pfcIsWindows())
+	{
+		pfcCreate = function(className){
+						netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+						ret = Components.classes ["@ptc.com/pfc/" + className + ";1"].createInstance();
+						return ret;
+					};
+	}
+	else
+	{
+		pfcCreate = function(className){
+						return new ActiveXObject ("pfc."+className);
+					};
+	}
+	return pfcCreate(className);
+}
+function HideHelp()
+{
+
+		HelpDIV.style.display = 'none';
+	
+	document.getElementById('Help').onclick = function(){ShowHelp();}
+}
+
+function ShowHelp()
+{
+
+
+		HelpDIV.style.display = '';
+
+
+	document.getElementById('Help').onclick = function(){HideHelp();}
+}
+</SCRIPT>
+</BODY>
+</HTML>

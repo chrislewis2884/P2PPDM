@@ -1,0 +1,13 @@
+# 07-Feb-00  I-03-26  $$1 JCN Changed class name.
+# 20-Nov-02  J-03-38  $$2 JCN Delay_start = true, due to Wildfire startup order
+# 30-Jan-03  J-03-41  $$3 JCN Removed ##2, added text_dir
+
+name     P2PPDM
+startup  java
+java_app_class  P2PPDM
+java_app_start  start
+java_app_stop   stop
+allow_stop      true
+delay_start     false
+text_dir        D:\peerTopeer\App\code\text
+end

@@ -1,0 +1,4 @@
+M	assembly1.asm
+M	part1.prt
+M	part2.prt
+M	part3.prt

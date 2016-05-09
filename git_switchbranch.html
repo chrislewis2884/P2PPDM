@@ -1,0 +1,218 @@
+<HTML>
+<HEAD>
+ <TITLE>GitChill Branch</TITLE>
+<SCRIPT>
+//Constants
+var WEBLINKNOTWORKING = "This Application requires Web.Link to be configured appropriately, contact your system administrator for more information";
+
+String.prototype.trim=function(){
+	return this.replace(/^s*s*$/g,'');
+}
+</SCRIPT>
+<SCRIPT>
+##REPLACEME##
+</SCRIPT>
+
+
+<link rel="stylesheet" type="text/css" href="p2p.css" />
+
+<style>
+
+input
+{
+	background-color: #FFFFFF;
+	border-radius:6px;
+	border
+	color: #FFFFFF;
+	font-family: 'Oswald';
+	font-size: 20px;
+	text-decoration: none;
+	cursor: pointer;
+	
+	width: 30px;
+	color: #464646;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: normal;
+}
+
+</style>
+</HEAD>
+<BODY>
+<div id="TitleDIV">
+	<table  width=100%>
+		<tr>
+			<Td width=130px><H1>p2p-PDM</H1></td>
+			<td width=15px><H1>|</h1></td>
+			<td><H1>Switch Branch</H1></td>
+			<td width=15px><img id=Help onclick=HideHelp() src="help_tablebutton.gif" /></td>
+		</tr>
+		<!--<tr>
+			<td colspan=2><img height=40px src="footer.png"></img></td>
+		</tr>-->
+	</table>
+</div>
+
+<DIV id="UIDIV">
+</DIV>
+<DIV id="HelpDIV">
+<HR></HR>
+<H2>Tips</H2>
+<LI>Select a branch to switch to.</LI>
+<LI>Press the button to initiate the switch.</LI>
+<HR></HR>
+</DIV>
+<DIV id="FooterDIV">
+	v3.0.2 by Chris Lewis, www.proetoolbox.co.uk &copy; 2015
+</DIV>
+<SCRIPT language="JavaScript">
+/*=========================
+Global Variables and 
+initialization commands
+=========================*/
+//libCheckEnvironment();
+//var fso = new ActiveXObject("Scripting.FileSystemObject");
+//var CurFolder = oSession.GetCurrentDirectory();
+//var GITWorkTreeFolder = "d:\\ptc\\creostartdir\\GITRepo";
+//var rightNowMS = new Date().getTime() ;
+
+ReadBranches();
+HideHelp();
+/*=========================
+Program & Utility Functions
+-
+-
+-
+=========================*/
+//=============
+//Program Functions
+//=============
+function ReadBranches()
+{
+	PotFiles = new Array();
+	
+	var Out = "Current Branch: "+currentbranch+"<BR>";
+	Out += "<form method=\"post\" action=\"SwitchBranch\" enctype=\"application/x-www-form-urlencoded\">"+
+		"<TABLE cellpadding=5px>"+
+				"<TR>"+
+					"<TH>Branch Name</TH><TH>Select</TH>"+
+				"</TR>";
+				
+	for (var i=0;i<branches.length;i++)
+	{
+		var curBranchName = branches[i]+"";
+		
+		var ActionButton = "<INPUT type=\"checkbox\" id=\"ProcessCB\"  name=\"ProcessCB\" value=\""+curBranchName+"\" ></INPUT>";
+		
+		Out+="<TR>"+
+				"<TD>"+curBranchName+"</TD>"+
+				"<TD>"+ActionButton+"</TD>"+
+			"</TR>";
+	}
+			
+	
+	Out+="<TR><TD></TD><TD><INPUT type=\"submit\" value=\"Switch Branch >>>\"  id=\"submit\" /></TD></TR>";
+	
+	Out += "</TABLE></form>";
+
+	UIDIV.innerHTML = Out;
+	
+}
+
+
+//=============
+//Utility Functions
+//=============
+function ToggleCBs()
+{
+	for (var i=1;i<ProcessCB.length;i++)
+	{
+		ProcessCB[i].checked = ProcessCB[0].checked;
+	}
+}
+function libCheckEnvironment()
+{
+	//Setup base global variables
+	try
+	{
+		window.mGlob = pfcCreate("MpfcCOMGlobal");
+		window.oSession = mGlob.GetProESession();
+		window.WLAvailable = true;
+	}
+	catch(er)
+	{
+		//Web.Link isn't available
+		alert (WEBLINKNOTWORKING);
+	}
+	//Check for ActiveX abilities
+	try
+	{
+		if (pfcIsWindows ()==false)
+			 throw "ACTIVE X NOT AVAILABLE ON NON-MICROSOFT PLATFORMS";
+
+		//Will fail if security not setup to allow it
+		var MAKEACTIVEXAPPEAR = new ActiveXObject("Scripting.FileSystemObject");
+
+		ActiveXAvailable = true;
+	}
+	catch(er)
+	{}
+}
+
+//Self-Optimizing Versions of standard PTC utility Functions
+function pfcIsWindows()
+{
+	if (navigator.appName.indexOf ("Microsoft") != -1)
+	{
+		pfcIsWindows = function(){
+							return true;
+						};
+	}
+	else
+	{
+		pfcIsWindows = function(){
+							return false;
+							};
+	}
+	return pfcIsWindows();
+}
+
+function pfcCreate(className)
+{
+	if (!pfcIsWindows())
+	{
+		pfcCreate = function(className){
+						netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+						ret = Components.classes ["@ptc.com/pfc/" + className + ";1"].createInstance();
+						return ret;
+					};
+	}
+	else
+	{
+		pfcCreate = function(className){
+						return new ActiveXObject ("pfc."+className);
+					};
+	}
+	return pfcCreate(className);
+}
+function HideHelp()
+{
+
+		HelpDIV.style.display = 'none';
+	
+	document.getElementById('Help').onclick = function(){ShowHelp();}
+}
+
+function ShowHelp()
+{
+
+
+		HelpDIV.style.display = '';
+
+
+	document.getElementById('Help').onclick = function(){HideHelp();}
+}
+</SCRIPT>
+</BODY>
+</HTML>

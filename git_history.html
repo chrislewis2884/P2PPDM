@@ -1,0 +1,214 @@
+<HTML>
+<HEAD>
+ <TITLE>GitChill History</TITLE>
+<SCRIPT>
+//Constants
+var WEBLINKNOTWORKING = "This Application requires Web.Link to be configured appropriately, contact your system administrator for more information";
+
+String.prototype.trim=function(){
+	return this.replace(/^s*s*$/g,'');
+}
+</SCRIPT>
+<SCRIPT>
+##REPLACEME##
+</SCRIPT>
+
+
+
+<link rel="stylesheet" type="text/css" href="p2p.css" />
+
+</HEAD>
+<BODY>
+<div id="TitleDIV">
+	<table width=100%>
+		<tr>
+			<Td width=130px><H1>p2p-PDM</H1></td>
+			<td width=15px><H1>|</h1></td>
+			<td><H1>Review History</H1></td>
+			<td width=15px><img id=Help onclick=HideHelp() src="help_tablebutton.gif" /></td>
+		</tr>
+		<!--<tr>
+			<td colspan=2><img height=40px src="footer.png"></img></td>
+		</tr>-->
+	</table>
+</div>
+
+<DIV id="UIDIV">
+
+</DIV>
+<DIV id="HelpDIV">
+<HR></HR>
+<H2>Tips</H2>
+<LI>Populate the fields and press the button.</LI>
+<LI>User name and email generate your Repos fingerprint.</LI>
+<LI>Location is the local folder to place the Repository in.</LI>
+<HR></HR>
+</DIV>
+<DIV id="FooterDIV">
+	v3.0.2 by Chris Lewis, www.proetoolbox.co.uk &copy; 2015
+</DIV>
+<SCRIPT language="JavaScript">
+/*=========================
+Global Variables and 
+initialization commands
+=========================*/
+//libCheckEnvironment();
+//var rightNowMS = new Date().getTime() ;
+
+HideHelp();
+BuildUI()
+
+/*=========================
+Program & Utility Functions
+-
+-
+-
+=========================*/
+//=============
+//Program Functions
+//=============
+function BuildUI()
+{
+	
+	var Out = "<TABLE><TR><TH>Commit ID</TH><TH>Details</TH><TH>Objects</TH></TR>";
+	
+	var idx = 0;
+	while (idx<commits.length)
+	{
+		var curCommit = commits[idx];
+		if (curCommit.indexOf("\t")==-1)
+		{
+			//found header
+			var index = curCommit.indexOf(" ");
+			var commit_ID = curCommit.substring(0,index);
+			var commit_DESCR = curCommit.substring(index+1);
+			var commit_OBJECTS = 'TBD';
+			//keep going to find the next header or the end of the lines
+			var Objects = new Array();
+			var idx2 = idx+1;
+			while (idx2<commits.length)
+			{
+				var curCommit = commits[idx2];
+				if (curCommit.indexOf("\t")==-1)
+				{	
+					//found next header
+					break;
+				}
+				else
+				{
+					var bits = curCommit.split("\t");
+					var action = bits[0];
+					var object = bits[1];
+					Objects[Objects.length] = "<a href=\"ReviewFileHistory?"+object+"\">"+object+"</a>";
+					
+				}
+				idx2++;
+			}
+			commit_OBJECTS = Objects.join("<BR>");
+			Out+="<TR><TD><a href=\"ReviewCommitHistory?"+commit_ID+"\">"+commit_ID+"</a></TD><TD>"+commit_DESCR+"</TD><TD>"+commit_OBJECTS+"</TD></TR>";
+		}
+		idx++;
+	}
+	
+	Out+="</TABLE>";
+	UIDIV.innerHTML = Out;
+}
+
+//=============
+//Utility Functions
+//=============
+function ToggleCBs()
+{
+	for (var i=1;i<ProcessCB.length;i++)
+	{
+		ProcessCB[i].checked = ProcessCB[0].checked;
+	}
+}
+function libCheckEnvironment()
+{
+	//Setup base global variables
+	try
+	{
+		window.mGlob = pfcCreate("MpfcCOMGlobal");
+		window.oSession = mGlob.GetProESession();
+		window.WLAvailable = true;
+		var curWin = oSession.CurrentWindow;
+		curWin.SetBrowserSize(40);
+	}
+	catch(er)
+	{
+		//Web.Link isn't available
+		alert (WEBLINKNOTWORKING);
+	}
+	//Check for ActiveX abilities
+	try
+	{
+		if (pfcIsWindows ()==false)
+			 throw "ACTIVE X NOT AVAILABLE ON NON-MICROSOFT PLATFORMS";
+
+		//Will fail if security not setup to allow it
+		var MAKEACTIVEXAPPEAR = new ActiveXObject("Scripting.FileSystemObject");
+
+		ActiveXAvailable = true;
+	}
+	catch(er)
+	{}
+}
+
+//Self-Optimizing Versions of standard PTC utility Functions
+function pfcIsWindows()
+{
+	if (navigator.appName.indexOf ("Microsoft") != -1)
+	{
+		pfcIsWindows = function(){
+							return true;
+						};
+	}
+	else
+	{
+		pfcIsWindows = function(){
+							return false;
+							};
+	}
+	return pfcIsWindows();
+}
+
+function pfcCreate(className)
+{
+	if (!pfcIsWindows())
+	{
+		pfcCreate = function(className){
+						netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+						ret = Components.classes ["@ptc.com/pfc/" + className + ";1"].createInstance();
+						return ret;
+					};
+	}
+	else
+	{
+		pfcCreate = function(className){
+						return new ActiveXObject ("pfc."+className);
+					};
+	}
+	return pfcCreate(className);
+}
+
+function HideHelp()
+{
+
+		HelpDIV.style.display = 'none';
+	
+	document.getElementById('Help').onclick = function(){ShowHelp();}
+}
+
+function ShowHelp()
+{
+
+
+		HelpDIV.style.display = '';
+
+
+	document.getElementById('Help').onclick = function(){HideHelp();}
+}
+</SCRIPT>
+</BODY>
+</HTML>

@@ -1,0 +1,271 @@
+<HTML>
+<HEAD>
+ <TITLE>GitChill Diffs</TITLE>
+<SCRIPT>
+//Constants
+var WEBLINKNOTWORKING = "This Application requires Web.Link to be configured appropriately, contact your system administrator for more information";
+
+String.prototype.trim=function(){
+	return this.replace(/^s*s*$/g,'');
+}
+</SCRIPT>
+<script>
+##REPLACEME1##
+</script>
+
+<link rel="stylesheet" type="text/css" href="p2p.css" />
+<style>
+
+input
+{
+	background-color: #FFFFFF;
+	border-radius:6px;
+	border
+	color: #FFFFFF;
+	font-family: 'Oswald';
+	font-size: 20px;
+	text-decoration: none;
+	cursor: pointer;
+	
+	width: 30px;
+	color: #464646;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: normal;
+}
+.button
+{
+	background-color: #F1F1F1;
+	border-radius:6px;
+	color: #464646;
+	font-family: 'Oswald';
+	font-size: 20px;
+	text-decoration: none;
+	cursor: pointer;
+	border:none;
+	border: 1px solid;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 700;
+	width: 200px;
+}
+
+</style>
+</HEAD>
+<BODY>
+<div id="TitleDIV">
+	<table  width=100%>
+		<tr>
+			<Td width=130px><H1>p2p-PDM</H1></td>
+			<td width=15px><H1>|</h1></td>
+			<td><H1>Diffs</H1></td>
+			<td width=15px><img id=Help onclick=HideHelp() src="help_tablebutton.gif" /></td>
+		</tr>
+		<!--<tr>
+			<td colspan=2><img height=40px src="footer.png"></img></td>
+		</tr>-->
+	</table>
+</div>
+
+<DIV id="UIDIV">
+</DIV>
+<DIV id="HelpDIV">
+<HR></HR>
+<H2>Tips</H2>
+<LI>Select the files you wish to export.</LI>
+<LI>Press the button to export those files.</LI>
+<HR></HR>
+</DIV>
+<DIV id="FooterDIV">
+	v3.0.2 by Chris Lewis, www.proetoolbox.co.uk &copy; 2015
+</DIV>
+<SCRIPT language="JavaScript">
+/*=========================
+Global Variables and 
+initialization commands
+=========================*/
+//libCheckEnvironment();
+//var CurFolder = oSession.GetCurrentDirectory();
+
+
+ReadFiles();
+HideHelp();
+
+/*=========================
+Program & Utility Functions
+-
+-
+-
+=========================*/
+//=============
+//Program Functions
+//=============
+function ReadFiles()
+{
+	if (wsfiles.length==0)
+	{
+		UI.innerHTML = "No Diffs";
+		return;
+	}
+	PotFiles = new Array();
+	
+	
+	var Out = "<form method=\"post\" action=\"Export\" enctype=\"application/x-www-form-urlencoded\">"+
+		"<TABLE cellpadding=5px id=\"FilesToExport\">"+
+				"<TR>"+
+				"<TH>Diff</TH>"+
+					"<TH>File</TH>"+
+					"<TH>Export<BR><INPUT type=\"checkbox\" id=\"ProcessCB\"  name=\"ProcessCB\" onclick=\"ToggleCBs()\" checked></INPUT></TH>"+
+				"</TR>";
+				
+	for (var i=0;i<wsfiles.length;i++)
+	{
+		var bits = wsfiles[i].split("\t");
+		var theDiff = bits[0];
+		var theFile = bits[1];
+		
+		if (theFile!=null)
+		{
+		Out+="<TR>"+
+		"<TD>"+theDiff+"</TD>"+
+			"<TD>"+theFile+"</TD>"+
+			"<TD><INPUT type=\"checkbox\" id=\"ProcessCB\"  name=\"ProcessCB\" value=\""+theFile+"\" checked></TD>"+
+		"</TR>";
+		}
+	}
+	
+	
+			
+	Out += "</TABLE>";
+	
+	
+	Out+="<INPUT type=\"submit\" value=\"Export >>>\"  id=\"submit\" />";
+	
+	
+	Out+="</form>";
+
+	UIDIV.innerHTML = Out;	
+}
+
+function HideNotChanged()
+{
+	for (var i=0;i<NCresult_tr.length;i++)
+	{
+		NCresult_tr[i].style.display = 'none';
+	}
+	
+	document.getElementById('ButToggleVisible').onclick = function(){ShowNotChanged();}
+}
+
+function ShowNotChanged()
+{
+
+	for (var i=0;i<NCresult_tr.length;i++)
+	{
+		NCresult_tr[i].style.display = '';
+	}
+
+	document.getElementById('ButToggleVisible').onclick = function(){HideNotChanged();}
+}
+
+//=============
+//Utility Functions
+//=============
+function ToggleCBs()
+{
+	var CBs = document.getElementsByName('ProcessCB');
+	for (var i=1;i<CBs.length;i++)
+	{
+		CBs[i].checked = CBs[0].checked;
+	}
+}
+function libCheckEnvironment()
+{
+	//Setup base global variables
+	try
+	{
+		window.mGlob = pfcCreate("MpfcCOMGlobal");
+		window.oSession = mGlob.GetProESession();
+		window.WLAvailable = true;
+		var curWin = oSession.CurrentWindow;
+		curWin.SetBrowserSize(40);
+	}
+	catch(er)
+	{
+		//Web.Link isn't available
+		alert (WEBLINKNOTWORKING);
+	}
+	//Check for ActiveX abilities
+	try
+	{
+		if (pfcIsWindows ()==false)
+			 throw "ACTIVE X NOT AVAILABLE ON NON-MICROSOFT PLATFORMS";
+
+		//Will fail if security not setup to allow it
+		var MAKEACTIVEXAPPEAR = new ActiveXObject("Scripting.FileSystemObject");
+
+		ActiveXAvailable = true;
+	}
+	catch(er)
+	{}
+}
+
+//Self-Optimizing Versions of standard PTC utility Functions
+function pfcIsWindows()
+{
+	if (navigator.appName.indexOf ("Microsoft") != -1)
+	{
+		pfcIsWindows = function(){
+							return true;
+						};
+	}
+	else
+	{
+		pfcIsWindows = function(){
+							return false;
+							};
+	}
+	return pfcIsWindows();
+}
+
+function pfcCreate(className)
+{
+	if (!pfcIsWindows())
+	{
+		pfcCreate = function(className){
+						netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+						ret = Components.classes ["@ptc.com/pfc/" + className + ";1"].createInstance();
+						return ret;
+					};
+	}
+	else
+	{
+		pfcCreate = function(className){
+						return new ActiveXObject ("pfc."+className);
+					};
+	}
+	return pfcCreate(className);
+}
+
+function HideHelp()
+{
+
+		HelpDIV.style.display = 'none';
+	
+	document.getElementById('Help').onclick = function(){ShowHelp();}
+}
+
+function ShowHelp()
+{
+
+
+		HelpDIV.style.display = '';
+
+
+	document.getElementById('Help').onclick = function(){HideHelp();}
+}
+</SCRIPT>
+</BODY>
+</HTML>

@@ -1,0 +1,249 @@
+<HTML>
+<HEAD>
+ <TITLE>Git Push</TITLE>
+<SCRIPT>
+//Constants
+var WEBLINKNOTWORKING = "This Application requires Web.Link to be configured appropriately, contact your system administrator for more information";
+
+String.prototype.trim=function(){
+	return this.replace(/^s*s*$/g,'');
+}
+</SCRIPT>
+<SCRIPT>
+##REPLACEME##
+</SCRIPT>
+<link rel="stylesheet" type="text/css" href="p2p.css" />
+<style>
+
+input
+{
+	background-color: #FFFFFF;
+	border-radius:6px;
+	border
+	color: #FFFFFF;
+	font-family: 'Oswald';
+	font-size: 20px;
+	text-decoration: none;
+	cursor: pointer;
+	
+	width: 30px;
+	color: #464646;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: normal;
+}
+.button
+{
+	background-color: #F1F1F1;
+	border-radius:6px;
+	color: #464646;
+	font-family: 'Oswald';
+	font-size: 20px;
+	text-decoration: none;
+	cursor: pointer;
+	border:none;
+	border: 1px solid;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 700;
+	width: 200px;
+}
+
+</style>
+</HEAD>
+<BODY>
+<div id="TitleDIV">
+	<table  width=100%>
+		<tr>
+			<Td width=130px><H1>p2p-PDM</H1></td>
+			<td width=15px><H1>|</h1></td>
+			<td><H1>Push</H1></td>
+			<td width=15px><img id=Help onclick=HideHelp() src="help_tablebutton.gif" /></td>
+		</tr>
+		<!--<tr>
+			<td colspan=2><img height=40px src="footer.png"></img></td>
+		</tr>-->
+	</table>
+</div>
+
+<DIV id="UIDIV">
+<form method="post" action="Initialize" enctype="application/x-www-form-urlencoded">
+<TABLE>
+<TR><TD>User Name: </TD><TD><input id="UserName" name="UserName" type="textbox" value="Chris Lewis" length=60></TD></TR>
+<TR><TD>User Email: </TD><TD> <input id="EmailAddress" name="EmailAddress" type="textbox" value="chrislewis@proetoolbox.co.uk" length=80></TD></TR>
+<TR><TD>Repo Locn: </TD><TD><input id="RepoLocn" name="RepoLocn"  type="textbox" value="Default" length=60></TD></TR>
+<TR><TD>Make Public Share: </TD><TD><input id="PublicRepoCB" name="PublicRepoCB"  value="True" type="checkbox" checked class=CB ></TD></TR>
+<tr><td></td><td class=dispright><div><input type="submit" value="Initialize >>>" id="submit" /></div></td></tr>
+</TABLE>
+  
+   </form>
+</DIV>
+<DIV id="HelpDIV">
+<HR></HR>
+<H2>Tips</H2>
+<LI>Decide which branch to push.</LI>
+<LI>Press the button to Push .</LI>
+<HR></HR>
+</DIV>
+<DIV id="FooterDIV">
+	v3.0.2 by Chris Lewis, www.proetoolbox.co.uk &copy; 2015
+</DIV>
+<SCRIPT language="JavaScript">
+/*=========================
+Global Variables and 
+initialization commands
+=========================*/
+//libCheckEnvironment();
+//var CurFolder = oSession.GetCurrentDirectory();
+//var rightNowMS = new Date().getTime() ;
+ReadBranches();
+HideHelp();
+
+/*=========================
+Program & Utility Functions
+-
+-
+-
+=========================*/
+//=============
+//Program Functions
+//=============
+function ReadBranches()
+{
+	var Out = "<form method=\"post\" action=\"Push\" enctype=\"application/x-www-form-urlencoded\">"+
+		"<INPUT type=\"hidden\" id=\"ProcessCB\"  name=\"ProcessCB\"></INPUT>"+
+		"<TABLE cellpadding=5px>"+
+				"<TR>"+
+					"<TH>Branch Name</TH><TH>Select</TH>"+
+				"</TR>";
+	
+	var ActionButton = "<INPUT type=\"checkbox\" id=\"ProcessCB\"  name=\"ProcessCB\" value=\""+currentbranch+"\" checked onclick=\"ClickCB(1)\"></INPUT>";
+		
+		Out+="<TR>"+
+				"<TD>"+currentbranch+" [Current]</TD>"+
+				"<TD>"+ActionButton+"</TD>"+
+			"</TR>";
+			
+	for (var i=0;i<branches.length;i++)
+	{
+		var curBranchName = branches[i]+"";
+		
+		var ActionButton = "<INPUT type=\"checkbox\" id=\"ProcessCB\"  name=\"ProcessCB\" value=\""+curBranchName+"\"  onclick=\"ClickCB("+(i+2)+")\"></INPUT>";
+		
+		Out+="<TR>"+
+				"<TD>"+curBranchName+"</TD>"+
+				"<TD>"+ActionButton+"</TD>"+
+			"</TR>";
+	}
+			
+	
+	Out+="<TR><TD></TD><TD><INPUT type=\"submit\" value=\"Push Branch >>>\"  id=\"submit\" /></TD></TR>";
+	
+	Out += "</TABLE></form>";
+
+	UIDIV.innerHTML = Out;
+	
+	
+}
+//=============
+//Utility Functions
+//=============
+function ClickCB(idx)
+{
+	var CBs = document.getElementsByName("ProcessCB");
+
+	for (var i=1;i<CBs.length;i++)
+	{
+		if (i==idx)
+			CBs[i].checked = true;
+		else
+			CBs[i].checked = false;
+	}
+}
+function libCheckEnvironment()
+{
+	//Setup base global variables
+	try
+	{
+		window.mGlob = pfcCreate("MpfcCOMGlobal");
+		window.oSession = mGlob.GetProESession();
+		window.WLAvailable = true;
+	}
+	catch(er)
+	{
+		//Web.Link isn't available
+		alert (WEBLINKNOTWORKING);
+	}
+	//Check for ActiveX abilities
+	try
+	{
+		if (pfcIsWindows ()==false)
+			 throw "ACTIVE X NOT AVAILABLE ON NON-MICROSOFT PLATFORMS";
+
+		//Will fail if security not setup to allow it
+		var MAKEACTIVEXAPPEAR = new ActiveXObject("Scripting.FileSystemObject");
+
+		ActiveXAvailable = true;
+	}
+	catch(er)
+	{}
+}
+
+//Self-Optimizing Versions of standard PTC utility Functions
+function pfcIsWindows()
+{
+	if (navigator.appName.indexOf ("Microsoft") != -1)
+	{
+		pfcIsWindows = function(){
+							return true;
+						};
+	}
+	else
+	{
+		pfcIsWindows = function(){
+							return false;
+							};
+	}
+	return pfcIsWindows();
+}
+
+function pfcCreate(className)
+{
+	if (!pfcIsWindows())
+	{
+		pfcCreate = function(className){
+						netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+						ret = Components.classes ["@ptc.com/pfc/" + className + ";1"].createInstance();
+						return ret;
+					};
+	}
+	else
+	{
+		pfcCreate = function(className){
+						return new ActiveXObject ("pfc."+className);
+					};
+	}
+	return pfcCreate(className);
+}
+function HideHelp()
+{
+
+		HelpDIV.style.display = 'none';
+	
+	document.getElementById('Help').onclick = function(){ShowHelp();}
+}
+
+function ShowHelp()
+{
+
+
+		HelpDIV.style.display = '';
+
+
+	document.getElementById('Help').onclick = function(){HideHelp();}
+}
+</SCRIPT>
+</BODY>
+</HTML>

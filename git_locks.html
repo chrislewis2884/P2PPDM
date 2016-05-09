@@ -1,0 +1,343 @@
+<HTML>
+<HEAD>
+ <TITLE>GitChill Locks</TITLE>
+<SCRIPT>
+//Constants
+var WEBLINKNOTWORKING = "This Application requires Web.Link to be configured appropriately, contact your system administrator for more information";
+
+String.prototype.trim=function(){
+	return this.replace(/^s*s*$/g,'');
+}
+</SCRIPT>
+<script src="listofFiles.js">
+</script>
+<script src="locks.js">
+</script>
+<link rel="stylesheet" type="text/css" href="p2p.css" />
+<style>
+
+input
+{
+	background-color: #FFFFFF;
+	border-radius:6px;
+	border
+	color: #FFFFFF;
+	font-family: 'Oswald';
+	font-size: 20px;
+	text-decoration: none;
+	cursor: pointer;
+	
+	width: 30px;
+	color: #464646;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: normal;
+}
+.button
+{
+	background-color: #F1F1F1;
+	border-radius:6px;
+	color: #464646;
+	font-family: 'Oswald';
+	font-size: 20px;
+	text-decoration: none;
+	cursor: pointer;
+	border:none;
+	border: 1px solid;
+	font-family: Segoe UI,tahoma,arial,helvetica,sans-serif;
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 700;
+	width: 200px;
+}
+
+</style>
+</HEAD>
+<BODY>
+<div id="TitleDIV">
+	<table  width=100%>
+		<tr>
+			<Td width=130px><H1>p2p-PDM</H1></td>
+			<td width=15px><H1>|</h1></td>
+			<td><H1>WS Locks</H1></td>
+			<td width=15px><img id=Help onclick=HideHelp() src="help_tablebutton.gif" /></td>
+		</tr>
+		<!--<tr>
+			<td colspan=2><img height=40px src="footer.png"></img></td>
+		</tr>-->
+	</table>
+</div>
+
+<DIV id="UIDIV">
+</DIV>
+<DIV id="HelpDIV">
+<HR></HR>
+<H2>Tips</H2>
+<LI>Select the files you wish to lock/unlock.</LI>
+<LI>Press the button to save the locks.</LI>
+<LI>Locking provides a way to stop commits.</LI>
+<HR></HR>
+</DIV>
+<DIV id="FooterDIV">
+	v3.0.2 by Chris Lewis, www.proetoolbox.co.uk &copy; 2015
+</DIV>
+<SCRIPT language="JavaScript">
+/*=========================
+Global Variables and 
+initialization commands
+=========================*/
+//libCheckEnvironment();
+//var fso = new ActiveXObject("Scripting.FileSystemObject");
+//var CurFolder = oSession.GetCurrentDirectory();
+//var rightNowMS = new Date().getTime() ;
+ReadFiles();
+HideHelp();
+
+/*=========================
+Program & Utility Functions
+-
+-
+-
+=========================*/
+//=============
+//Program Functions
+//=============
+function ReadFiles()
+{
+	if (wsfiles.length==0)
+	{
+		UI.innerHTML = "No Modified Files";
+		return;
+	}
+	PotFiles = new Array();
+	
+	
+	var Out = "<form method=\"post\" action=\"setlocks\" enctype=\"application/x-www-form-urlencoded\">"+
+		"<TABLE cellpadding=5px id=\"FilesToAdd\">"+
+				"<TR>"+
+					"<TH>File</TH>"+
+					"<TH>Version</TH>"+
+					"<TH>When Modified</TH>"+
+					"<TH>Lock<BR><INPUT type=\"checkbox\" id=\"ProcessCB\"  name=\"ProcessCB\" onclick=\"ToggleCBs()\" ></INPUT></TH>"+
+				"</TR>";
+				
+	for (var i=0;i<wsfiles.length;i++)
+	{
+		var curFileName = wsfiles[i].filename+"";
+		
+		var curFileModifiedTime = wsfiles[i].modifiedtime;
+		if (curFileName.indexOf(".prt")>-1 || curFileName.indexOf(".asm")>-1 || curFileName.indexOf(".drw")>-1 || curFileName.indexOf(".frm")>-1)
+		{
+			var nFileObj = new Object();
+			var bits = curFileName.split(".");
+			if (bits.length==3)
+			{
+				curFileName = bits[0]+"."+bits[1];
+				if (PotFiles[curFileName] == null || PotFiles[curFileName].version<bits[2])
+				{
+					nFileObj.version = bits[2];
+					nFileObj.modifiedtime = curFileModifiedTime;
+					
+					var lock = false;
+					for (var j=0;j<wslocks.length;j++)
+					{
+						var curLock = wslocks[j];
+						if (curFileName.indexOf(curLock)>-1)
+						{
+							lock = true;
+						}
+					}
+					nFileObj.lock = lock;
+					
+					PotFiles[curFileName] = nFileObj;
+				}
+			}
+			else
+			{
+				if (PotFiles[curFileName] == null || PotFiles[curFileName].version<bits[2])
+				{
+					nFileObj.version = 0;
+					nFileObj.modifiedtime = curFileModifiedTime;
+					
+					var lock = false;
+					for (var j=0;j<wslocks.length;j++)
+					{
+						var curLock = wslocks[j];
+						if (curFileName.indexOf(curLock)>-1)
+						{
+							lock = true;
+						}
+					}
+					nFileObj.lock = lock;
+					
+					PotFiles[curFileName] = nFileObj;
+				}
+			}
+		}
+	}
+	
+	var NumUnChanged = 0;
+	var NumChanged = 0;
+	for (key in PotFiles) 
+	{
+		
+		var theFile = key+"."+PotFiles[key].version;
+		if (PotFiles[key].lock)
+			var checked = 'checked'
+		else
+			var checked = '';
+			
+		var ActionButton = "<INPUT type=\"checkbox\" id=\"ProcessCB\"  name=\"ProcessCB\" value=\""+theFile+"\" "+checked+"></INPUT>";
+		var Disp= "";
+		NumChanged++;
+		
+		
+		var curFileModDateStr = PotFiles[key].modifiedtime+'';//theFile.DateLastModified;
+		curFileModDateStr = curFileModDateStr.replace("T"," ");
+		curFileModDateStr = curFileModDateStr.replace(".000Z"," ");
+		var bits1 = curFileModDateStr.split(" ");
+		var bits1a = bits1[0].split("-");
+		var bits2a = bits1[1].split(":");
+		
+		var d = new Date(bits1a[0], bits1a[1]-1, bits1a[2], bits2a[0], bits2a[1], bits2a[2], 0);
+		var msec = d.getTime();
+
+		var diff = Math.round(((rightNowMS-msec)/(1000*60*60*24))*10)/10; //Round down
+		var bits = key.split("\\"); //Show only Filename instead of full path
+		//var diff = "?";
+		var fn = bits[bits.length-1]; 
+		Out+="<TR  "+Disp+">"+
+				"<TD>"+fn+"</TD>"+
+				"<TD>"+PotFiles[key].version+"</TD>";
+		
+		if (diff<1)
+		{
+			Out+= "<TD>Today</TD>";
+		}
+		if (diff<2 && diff>1)
+		{
+			Out+= "<TD>Yesterday</TD>";
+		}
+		if (diff>=2)
+		{
+			Out+= "<TD>"+diff+" Days Ago</TD>";
+		}
+		
+		
+		Out+="<TD>"+ActionButton+"</TD>"+
+			"</TR>";
+	}
+			
+	Out += "</TABLE>";
+	
+	if (NumChanged>0)
+	{
+		Out+="<INPUT type=\"submit\" value=\"Store Locks >>>\"  id=\"submit\" />";
+	}
+	
+	Out+="</form>";
+
+	UIDIV.innerHTML = Out;	
+}
+
+
+//=============
+//Utility Functions
+//=============
+function ToggleCBs()
+{
+	var CBs = document.getElementsByName('ProcessCB');
+	for (var i=1;i<CBs.length;i++)
+	{
+		CBs[i].checked = CBs[0].checked;
+	}
+}
+function libCheckEnvironment()
+{
+	//Setup base global variables
+	try
+	{
+		window.mGlob = pfcCreate("MpfcCOMGlobal");
+		window.oSession = mGlob.GetProESession();
+		window.WLAvailable = true;
+		var curWin = oSession.CurrentWindow;
+		curWin.SetBrowserSize(40);
+	}
+	catch(er)
+	{
+		//Web.Link isn't available
+		alert (WEBLINKNOTWORKING);
+	}
+	//Check for ActiveX abilities
+	try
+	{
+		if (pfcIsWindows ()==false)
+			 throw "ACTIVE X NOT AVAILABLE ON NON-MICROSOFT PLATFORMS";
+
+		//Will fail if security not setup to allow it
+		var MAKEACTIVEXAPPEAR = new ActiveXObject("Scripting.FileSystemObject");
+
+		ActiveXAvailable = true;
+	}
+	catch(er)
+	{}
+}
+
+//Self-Optimizing Versions of standard PTC utility Functions
+function pfcIsWindows()
+{
+	if (navigator.appName.indexOf ("Microsoft") != -1)
+	{
+		pfcIsWindows = function(){
+							return true;
+						};
+	}
+	else
+	{
+		pfcIsWindows = function(){
+							return false;
+							};
+	}
+	return pfcIsWindows();
+}
+
+function pfcCreate(className)
+{
+	if (!pfcIsWindows())
+	{
+		pfcCreate = function(className){
+						netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+						ret = Components.classes ["@ptc.com/pfc/" + className + ";1"].createInstance();
+						return ret;
+					};
+	}
+	else
+	{
+		pfcCreate = function(className){
+						return new ActiveXObject ("pfc."+className);
+					};
+	}
+	return pfcCreate(className);
+}
+
+function HideHelp()
+{
+
+		HelpDIV.style.display = 'none';
+	
+	document.getElementById('Help').onclick = function(){ShowHelp();}
+}
+
+function ShowHelp()
+{
+
+
+		HelpDIV.style.display = '';
+
+
+	document.getElementById('Help').onclick = function(){HideHelp();}
+}
+</SCRIPT>
+</BODY>
+</HTML>
